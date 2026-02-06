@@ -1,0 +1,24 @@
+name: Angular CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint and Build
+        run: npm run build --configuration=production
+
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ton-docker-user/mes-salons-web:latest
