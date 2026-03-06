@@ -23,14 +23,16 @@ export class AdminComponent {
 
   message = '';
 
-  ajouterSalon() {
+ajouterSalon() {
     this.salonService.createSalon(this.nouveauSalon).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.message = `✅ Salon "${response.nom}" ajouté avec succès !`;
-        // On vide le formulaire
         this.nouveauSalon = { nom: '', adresse: '', latitude: 0, longitude: 0 };
       },
-      error: (err) => this.message = '❌ Erreur lors de l\'ajout du salon.'
+      error: (err: any) => {
+        console.error(err);
+        this.message = '❌ Erreur lors de l\'ajout du salon.';
+      }
     });
   }
 }
