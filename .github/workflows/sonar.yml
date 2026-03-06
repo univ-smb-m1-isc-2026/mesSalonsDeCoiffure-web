@@ -1,5 +1,5 @@
 
-# mvn verify sonar:sonar \
+mvn verify sonar:sonar \
 #  -Dsonar.projectKey=ton_projet_key \
 #  -Dsonar.host.url=https://sonarcloud.io \
 #  -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
