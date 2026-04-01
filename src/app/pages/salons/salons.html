@@ -1,0 +1,52 @@
+<div class="salons-container">
+
+  <div class="salons-list-section">
+    <h2 style="margin-top: 0; color: #2c3e50;">Nos Salons Partenaires</h2>
+    <p style="color: #7f8c8d; margin-bottom: 20px;">Trouvez le salon le plus proche de chez vous.</p>
+
+    <div class="search-bar">
+      <input
+        type="text"
+        [(ngModel)]="termeRecherche"
+        (input)="appliquerFiltre()"
+        placeholder="Rechercher une ville, un nom..."
+        class="search-input">
+    </div>
+
+    <div *ngIf="salonsFiltres.length === 0" class="empty-state">
+      Aucun salon ne correspond à votre recherche. 😥
+    </div>
+
+    <div *ngFor="let salon of salonsPagines" class="salon-card">
+      <h3 style="margin: 0 0 5px 0; color: #2980b9;">{{ salon.nom }}</h3>
+      <p style="margin: 0 0 15px 0; color: #7f8c8d; font-size: 0.9em;">📍 {{ salon.adresse }}</p>
+
+      <a [href]="'/reserver?salonId=' + salon.id" class="btn-reserver">
+        Voir les disponibilités
+      </a>
+    </div>
+
+    <div *ngIf="salonsFiltres.length > 0" class="pagination-controls">
+      <button
+        (click)="changerPage(-1)"
+        [disabled]="pageActuelle === 1"
+        class="btn-page">
+        ⬅️ Précédent
+      </button>
+
+      <span class="page-info">Page {{ pageActuelle }} sur {{ totalPages }}</span>
+
+      <button
+        (click)="changerPage(1)"
+        [disabled]="pageActuelle === totalPages"
+        class="btn-page">
+        Suivant ➡️
+      </button>
+    </div>
+  </div>
+
+  <div class="map-section">
+    <div id="map" style="width: 100%; height: 100%;"></div>
+  </div>
+
+</div>

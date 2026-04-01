@@ -1,0 +1,203 @@
+<div class="admin-container">
+
+  <div *ngIf="messages.global" class="alert alert-success">
+    {{ messages.global }}
+  </div>
+
+  <div *ngIf="!salonSelectionne">
+    <h1 class="page-title">🏢 Mes Salons</h1>
+
+    <div class="dashboard-grid">
+      <div class="list-section">
+        <div *ngIf="salons.length === 0" class="alert alert-empty">
+          <p>Vous n'avez encore configuré aucun salon.</p>
+          <p>👉 Utilisez le formulaire à droite pour créer votre premier espace !</p>
+        </div>
+
+        <div *ngFor="let salon of salons" class="card" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3 class="card-title">{{ salon.nom }}</h3>
+            <p class="card-text">📍 {{ salon.adresse }}</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-success" (click)="gererSalon(salon)">
+              ⚙️ Gérer l'Équipe & Services
+            </button>
+            <button class="btn btn-warning btn-icon" (click)="editerSalon(salon)" title="Modifier">✏️</button>
+            <button class="btn btn-danger btn-icon" (click)="demanderSuppression(salon.id)" title="Supprimer">🗑️</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section card">
+        <h3>{{ formSalon.id ? '✏️ Modifier le salon' : '➕ Nouveau salon' }}</h3>
+
+        <div *ngIf="messages.salon" class="alert alert-success" style="padding: 10px; font-size: 0.9em;">
+          {{ messages.salon }}
+        </div>
+
+        <form (ngSubmit)="sauvegarderSalon()" class="admin-form">
+          <input type="text" [(ngModel)]="formSalon.nom" name="s_nom" placeholder="Nom du salon (ex: Barber Shop)" required>
+          <input type="text" [(ngModel)]="formSalon.adresse" name="s_adresse" placeholder="Adresse complète" required>
+
+          <div class="form-row">
+            <input type="number" step="0.0001" [(ngModel)]="formSalon.latitude" name="s_lat" placeholder="Latitude">
+            <input type="number" step="0.0001" [(ngModel)]="formSalon.longitude" name="s_lng" placeholder="Longitude">
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            {{ formSalon.id ? '💾 Mettre à jour' : '🚀 Créer le salon' }}
+          </button>
+          <button *ngIf="formSalon.id" type="button" class="btn btn-outline" (click)="annulerEditionSalon()">
+            ❌ Annuler
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="salonSelectionne">
+    <button class="btn btn-outline" (click)="retourSalons()" style="margin-bottom: 20px;">
+      ⬅️ Retour à la liste des salons
+    </button>
+
+    <h1 class="page-title" style="border-bottom-color: #27ae60;">Gérance : {{ salonSelectionne.nom }}</h1>
+    <p class="section-subtitle">Configurez votre équipe de coiffeurs et votre catalogue de services pour ce salon spécifique.</p>
+
+    <div class="dashboard-grid">
+      <div class="list-section card">
+        <h2 style="color: #8e44ad; margin-top: 0;">✂️ Mon Équipe</h2>
+
+        <div *ngIf="messages.employe" class="alert alert-success" style="padding: 10px; font-size: 0.9em; margin-bottom: 15px;">
+          {{ messages.employe }}
+        </div>
+
+        <form (ngSubmit)="sauvegarderEmploye()" class="form-row" style="margin-bottom: 20px;">
+          <input type="text" [(ngModel)]="formEmploye.nom" name="e_nom" placeholder="Nom du coiffeur" required>
+          <button type="submit" class="btn btn-primary" style="background: #8e44ad;">
+            {{ formEmploye.id ? 'Modifier' : 'Ajouter' }}
+          </button>
+        </form>
+
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li *ngIf="employes.length === 0" style="color: #95a5a6; padding: 10px 0;">Aucun collaborateur enregistré.</li>
+          <li *ngFor="let emp of employes" style="display: flex; flex-direction: column; padding: 12px 0; border-bottom: 1px solid #ecf0f1;">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <strong>{{ emp.nom }}</strong>
+              <div>
+                <button class="btn btn-icon" (click)="editerEmploye(emp)">✏️</button>
+                <button class="btn btn-icon" (click)="supprimerEmploye(emp.id)">❌</button>
+              </div>
+            </div>
+
+            <div *ngIf="prestations.length > 0" style="margin-top: 10px; background: #f8f9fa; padding: 10px; border-radius: 6px;">
+              <small style="color: #7f8c8d; font-weight: bold; margin-bottom: 5px; display: block;">Spécialités :</small>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+
+                <label *ngFor="let prest of prestations" style="font-size: 0.85em; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                  <input type="checkbox"
+                         [checked]="employePossedePrestation(emp, prest)"
+                         (change)="togglePrestation(emp, prest, $event)">
+                  {{ prest.nom }}
+                </label>
+
+              </div>
+            </div>
+
+          </li>
+        </ul>
+      </div>
+
+      <div class="list-section card">
+        <h2 style="color: #e67e22; margin-top: 0;">🏷️ Services & Tarifs</h2>
+
+        <div *ngIf="messages.prestation" class="alert alert-success" style="padding: 10px; font-size: 0.9em; margin-bottom: 15px;">
+          {{ messages.prestation }}
+        </div>
+
+        <form (ngSubmit)="sauvegarderPrestation()" class="admin-form" style="margin-bottom: 20px;">
+          <input type="text" [(ngModel)]="formPrestation.nom" name="p_nom" placeholder="Nom de la prestation (ex: Coupe Homme)" required>
+          <div class="form-row">
+            <input type="number" [(ngModel)]="formPrestation.dureeMinutes" name="p_duree" placeholder="Durée (min)" required>
+            <input type="number" [(ngModel)]="formPrestation.prix" name="p_prix" placeholder="Prix (€)" required>
+            <button type="submit" class="btn btn-primary" style="background: #e67e22;">
+              {{ formPrestation.id ? 'Modifier' : 'Ajouter' }}
+            </button>
+          </div>
+        </form>
+
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li *ngIf="prestations.length === 0" style="color: #95a5a6; padding: 10px 0;">Aucun service configuré.</li>
+          <li *ngFor="let prest of prestations" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #ecf0f1;">
+            <div>
+              <strong>{{ prest.nom }}</strong><br>
+              <small style="color: #7f8c8d;">⏱️ {{ prest.dureeMinutes }} min | 💶 {{ prest.prix }} €</small>
+            </div>
+            <div>
+              <button class="btn btn-icon" (click)="editerPrestation(prest)">✏️</button>
+              <button class="btn btn-icon" (click)="supprimerPrestation(prest.id)">❌</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 30px; border-left: 4px solid #3498db;">
+      <h2 style="color: #3498db; margin-top: 0;">📅 Planning & Créneaux Disponibles</h2>
+
+    <form (ngSubmit)="sauvegarderCreneau()" class="form-row">
+
+        <div style="flex: 1;">
+          <select [(ngModel)]="formCreneau.employeId" name="c_emp">
+            <option [value]="null">Choisir un coiffeur...</option>
+            <option *ngFor="let emp of employes" [value]="emp.id">{{ emp.nom }}</option>
+          </select>
+        </div>
+
+        <div style="flex: 1;">
+          <select [(ngModel)]="formCreneau.jourSemaine" name="c_jour" required>
+            <option value="">Choisir un jour...</option>
+            <option *ngFor="let jour of joursDeLaSemaine" [value]="jour">{{ jour }}</option>
+          </select>
+        </div>
+
+        <div style="flex: 1;">
+          <input type="time" [(ngModel)]="formCreneau.heureDebut" name="c_heure" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">➕ Ajouter</button>
+      </form>
+
+
+
+      <div *ngIf="creneaux.length === 0" class="alert alert-empty">
+        Aucun créneau d'ouverture n'est configuré pour ce salon.
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+       <div *ngFor="let c of creneaux" class="creneau-pill">
+        <strong>{{ c.jourSemaine }} à {{ c.heureDebut }}</strong>
+        <span>(Avec {{ c.employe?.nom }})</span>
+        <button (click)="supprimerCreneau(c.id)">❌</button>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="afficherModalSuppression">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: #e74c3c;">⚠️ Confirmation</h3>
+      </div>
+      <div class="modal-body">
+        <p>Êtes-vous sûr de vouloir supprimer définitivement ce salon ?</p>
+        <p style="font-size: 0.9em; color: #7f8c8d;">Cette action est irréversible et supprimera également les coiffeurs et services associés.</p>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+        <button class="btn btn-outline" (click)="annulerSuppression()">Annuler</button>
+        <button class="btn btn-danger" (click)="confirmerSuppression()">Oui, supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

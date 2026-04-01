@@ -1,0 +1,204 @@
+.reservation-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.page-title {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 30px;
+}
+
+.alert-message {
+  padding: 10px;
+  background: #f39c12;
+  color: white;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.client-info-box {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 15px;
+}
+
+.input-group {
+  flex: 1;
+}
+
+.input-group label {
+  font-size: 0.9em;
+  color: #7f8c8d;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.choices-grid {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.choice-column {
+  flex: 1;
+  min-width: 200px;
+}
+
+.choice-column label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2c3e50;
+}
+
+.choice-column select,
+.choice-column input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  font-size: 0.9em;
+  cursor: pointer;
+  font-weight: normal !important;
+}
+
+.btn-search {
+  width: 100%;
+  padding: 15px;
+  background: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.btn-search:hover {
+  background: #1a252f;
+}
+
+.results-section {
+  margin-top: 30px;
+}
+
+.results-section h3 {
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.creneaux-grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.creneau-btn {
+  padding: 10px 20px;
+  background: #ecf0f1;
+  color: #2c3e50;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.creneau-btn:hover {
+  background: #bdc3c7;
+}
+
+.creneau-btn.selected {
+  background: #27ae60;
+  color: white;
+}
+
+.emp-name {
+  font-size: 0.75em;
+  font-weight: normal;
+  margin-top: 4px;
+}
+
+.recap-box {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  border: 2px solid #27ae60;
+}
+
+.recap-box h3 {
+  margin-top: 0;
+  color: #27ae60;
+}
+
+.btn-confirm {
+  margin-top: 15px;
+  padding: 15px 30px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(39, 174, 96, 0.3);
+  transition: transform 0.1s;
+}
+
+.btn-confirm:active {
+  transform: scale(0.98);
+}
+
+.login-prompt {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px dashed #ccc;
+}
+
+.highlight-text {
+  color: #e67e22;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+}
+
+.btn-login {
+  padding: 12px 25px;
+  background: #2980b9;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+}

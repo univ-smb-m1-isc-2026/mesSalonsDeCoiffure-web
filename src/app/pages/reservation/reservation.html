@@ -1,0 +1,82 @@
+<div class="reservation-container">
+  <h2 class="page-title">Prendre un Rendez-vous</h2>
+
+  <div *ngIf="message" class="alert-message">
+    {{ message }}
+  </div>
+
+  <div *ngIf="estConnecte" class="client-info-box">
+    <div class="input-group">
+      <label>Pour qui ?</label>
+      <input type="text" [(ngModel)]="client.nom">
+    </div>
+    <div class="input-group">
+      <label>Téléphone (Contact & Rappels)</label>
+      <input type="tel" [(ngModel)]="client.telephone">
+    </div>
+  </div>
+
+  <div class="choices-grid">
+    <div class="choice-column">
+      <label>Que souhaitez-vous ?</label>
+      <select [(ngModel)]="choix.prestationId" (change)="onPrestationChange()">
+        <option [value]="null" disabled>Choisir une prestation...</option>
+        <option *ngFor="let p of prestationsDuSalon" [value]="p.id">{{ p.nom }} ({{ p.prix }}€)</option>
+      </select>
+    </div>
+
+    <div class="choice-column">
+      <label>Avec qui ?</label>
+      <select [(ngModel)]="choix.employeId" [disabled]="choix.nImporteQui || !choix.prestationId">
+        <option [value]="null" disabled>Choisir un coiffeur...</option>
+        <option *ngFor="let e of employesFiltres" [value]="e.id">{{ e.nom }}</option>
+      </select>
+
+      <label class="checkbox-label">
+        <input type="checkbox" [(ngModel)]="choix.nImporteQui">
+        Peu m'importe (Montrer tous les créneaux)
+      </label>
+    </div>
+
+    <div class="choice-column">
+      <label>Quand ?</label>
+      <input type="date" [(ngModel)]="choix.date">
+    </div>
+  </div>
+
+  <button class="btn-search" (click)="chercherDispos()">
+    🔍 Chercher les disponibilités
+  </button>
+
+  <div *ngIf="creneauxDisponibles.length > 0" class="results-section">
+    <h3>Créneaux disponibles le {{ choix.date | date:'dd/MM/yyyy' }}</h3>
+
+    <div class="creneaux-grid">
+      <button *ngFor="let creneau of creneauxDisponibles"
+              (click)="creneauSelectionne = creneau"
+              class="creneau-btn"
+              [class.selected]="creneauSelectionne === creneau">
+        {{ formaterHeure(creneau.heureDebut) }}
+        <span class="emp-name" *ngIf="choix.nImporteQui">({{ creneau.employe?.nom }})</span>
+      </button>
+    </div>
+
+    <div *ngIf="creneauSelectionne" class="recap-box">
+      <h3>Récapitulatif</h3>
+      <p>Rendez-vous le <b>{{ choix.date | date:'dd/MM/yyyy' }}</b> à <b>{{ formaterHeure(creneauSelectionne.heureDebut) }}</b></p>
+      <p *ngIf="choix.nImporteQui">Avec : <b>{{ creneauSelectionne.employe?.nom }}</b></p>
+
+      <button *ngIf="estConnecte" class="btn-confirm" (click)="confirmerRendezVous()">
+        ✅ Confirmer la réservation
+      </button>
+
+      <div *ngIf="!estConnecte" class="login-prompt">
+        <p class="highlight-text">Vous y êtes presque !</p>
+        <p>Connectez-vous à votre compte pour finaliser ce rendez-vous.</p>
+        <button class="btn-login" (click)="allerVersConnexion()">
+          👤 Se connecter / S'inscrire
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

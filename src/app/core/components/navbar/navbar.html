@@ -1,0 +1,25 @@
+<nav style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: #2c3e50; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+
+  <div style="font-size: 1.5rem; font-weight: bold;">
+    <a routerLink="/" style="color: white; text-decoration: none;">✂️ Mes Salons</a>
+  </div>
+
+  <div style="display: flex; gap: 1rem; align-items: center;">
+
+    <ng-container *ngIf="!authService.isLoggedIn()">
+      <a routerLink="/login" style="color: white; text-decoration: none; padding: 0.5rem 1rem;">Se connecter</a>
+      <a routerLink="/admin/login" style="color: #f1c40f; text-decoration: none; padding: 0.5rem 1rem; border: 1px solid #f1c40f; border-radius: 4px;">Espace Pro</a>
+    </ng-container>
+
+  <ng-container *ngIf="authService.isLoggedIn()">
+      <a *ngIf="authService.getRole() === 'ADMIN'" routerLink="/admin" style="color: white; text-decoration: none; padding: 0.5rem 1rem;">⚙️ Tableau de bord</a>
+
+      <a routerLink="/profil" style="color: white; text-decoration: none; padding: 0.5rem 1rem;">👤 Mon Profil</a>
+
+      <button (click)="deconnecter()" style="background: #e74c3c; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background 0.3s;" onmouseover="this.style.background='#c0392b'" onmouseout="this.style.background='#e74c3c'">
+        Déconnexion
+      </button>
+    </ng-container>
+
+  </div>
+</nav>

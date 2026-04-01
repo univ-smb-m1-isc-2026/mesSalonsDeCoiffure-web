@@ -1,0 +1,124 @@
+/* Layout Principal */
+.salons-container {
+  display: flex;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  height: calc(100vh - 150px);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.salons-list-section {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-section {
+  flex: 1.5;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #bdc3c7;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Barre de recherche */
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #dfe6e9;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+/* Carte des salons */
+.salon-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background: white;
+  transition: transform 0.2s ease;
+}
+
+.salon-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.btn-reserver {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s;
+}
+
+.btn-reserver:hover {
+  background: #2980b9;
+}
+
+/* États vides et Pagination */
+.empty-state {
+  padding: 20px;
+  background: #f8f9fa;
+  text-align: center;
+  border-radius: 8px;
+  color: #7f8c8d;
+  border: 2px dashed #bdc3c7;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto; /* Pousse la pagination tout en bas */
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.btn-page {
+  background: #ecf0f1;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #2c3e50;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-page:hover:not(:disabled) {
+  background: #bdc3c7;
+}
+
+.btn-page:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-weight: bold;
+  color: #7f8c8d;
+}

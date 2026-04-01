@@ -1,0 +1,49 @@
+<div style="max-width: 450px; margin: 50px auto; padding: 30px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background: white;">
+  <h2 style="text-align: center; margin-bottom: 20px;">Créer un compte</h2>
+
+  <div *ngIf="messageErreur" style="color: red; background: #fee; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+    {{ messageErreur }}
+  </div>
+  <div *ngIf="messageSucces" style="color: green; background: #efe; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+    {{ messageSucces }}
+  </div>
+
+  <form (ngSubmit)="sInscrire()">
+
+    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+      <div style="flex: 1;">
+        <label style="display: block; margin-bottom: 5px;">Prénom :</label>
+        <input type="text" [(ngModel)]="nouvelUtilisateur.prenom" name="prenom" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+      </div>
+      <div style="flex: 1;">
+        <label style="display: block; margin-bottom: 5px;">Nom :</label>
+        <input type="text" [(ngModel)]="nouvelUtilisateur.nom" name="nom" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+      </div>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label style="display: block; margin-bottom: 5px;">Email :</label>
+      <input type="email" [(ngModel)]="nouvelUtilisateur.email" name="email" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 5px;">Mot de passe :</label>
+      <input type="password" [(ngModel)]="nouvelUtilisateur.motDePasse" name="motDePasse" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+    </div>
+
+    <div style="margin-bottom: 20px; padding: 10px; background: #f8f9fa; border-left: 4px solid #f39c12;">
+      <label style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
+        <input type="checkbox" [(ngModel)]="isAdmin" name="isAdmin">
+        <span>S'inscrire en tant que Gérant / Administrateur</span>
+      </label>
+    </div>
+
+    <button type="submit" style="width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold;">
+      M'inscrire
+    </button>
+  </form>
+
+  <p style="text-align: center; margin-top: 20px; font-size: 0.9em;">
+    Déjà un compte ? <a routerLink="/login" style="color: #2980b9; text-decoration: none;">Se connecter</a>
+  </p>
+</div>
