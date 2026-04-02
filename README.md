@@ -1,59 +1,82 @@
-# AppFront
+# ✂️ Application Front-End : Mes Salons de Coiffure
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.3.
+Ceci est l'application Front-End (côté client) du projet **Mes Salons de Coiffure**. Elle offre une interface moderne et réactive permettant aux clients de réserver des créneaux, et aux gérants d'administrer leurs salons et leurs employés.
 
-## Development server
+Ce projet a été généré avec [Angular CLI](https://github.com/angular/angular-cli) et communique avec une API REST sécurisée par JWT (développée en Spring Boot).
 
-To start a local development server, run:
+---
+
+## 🛠️ Technologies Utilisées
+
+* **Framework :** Angular
+* **Langage :** TypeScript, HTML5, SCSS/CSS
+* **Authentification :** JWT (JSON Web Tokens)
+* **Requêtes HTTP :** `HttpClient` & Interceptors (pour attacher le token aux requêtes)
+* **Déploiement :** Docker & Nginx (Prêt pour la production)
+
+---
+
+## 🚀 Démarrage Rapide (Environnement de Développement)
+
+Pour exécuter ce projet localement sur votre machine, assurez-vous d'avoir [Node.js](https://nodejs.org/) installé.
+
+**1. Cloner le projet et installer les dépendances :**
+```bash
+git clone https://github.com/univ-smb-m1-isc-2026/mesSalonsDeCoiffure-web.git
+cd mesSalonsDeCoiffure-web
+npm install
+```
+
+**2. Lancer le serveur de développement :**
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Ouvrez votre navigateur et accédez à 👉 http://localhost:4200/. L'application se rechargera automatiquement si vous modifiez un fichier source.
 
-## Code scaffolding
+  - ⚠️ Important : Pour que l'application fonctionne correctement, l'API Backend (Spring Boot) doit être en cours d'exécution sur http://localhost:8080.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
-```bash
-ng generate component component-name
+## 📂 Architecture du Projet
+
+Le code source est organisé pour être évolutif et facile à maintenir :
+
+```
+src/app/
+ ├── core/components/    # Composants réutilisables (ex: Navbar, Footer, Boutons)
+ ├── pages/         # Vues principales de l'application (ex: Home, Login, AdminDashboard)
+ ├── core/services/      # Logique métier et appels à l'API (ex: AuthService, ReservationService)
+ └── core/interceptors/  # Intercepteurs HTTP (ex: JwtInterceptor pour ajouter le token Bearer)
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🔗 Connexion à l'API (Environnements)
 
-```bash
-ng generate --help
+L'application est configurée pour pointer vers différentes URL d'API selon l'environnement. Ces variables se trouvent dans le dossier src/environments/ :
+
+- environment.development.ts (Développement local) : Pointe vers http://localhost:8080/api
+- environment.ts (Production) : Pointe vers https://api.manage-your-scissors.oups.net/api
+
+## 📦 Génération du Code (CLI)
+
+Angular CLI inclut des outils puissants pour générer du code rapidement :
+
+- Composant : ng generate component nom-du-composant
+- Service : ng generate service services/nom-du-service
+- Interface (Modèle) : ng generate interface models/nom-du-modele
+
+Pour voir toutes les commandes : ng generate --help
+
+## 🏗️ Build pour la Production
+
+Pour compiler l'application en vue d'un déploiement en production, exécutez :
+
 ```
-
-## Building
-
-To build the project run:
-
-```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Les fichiers compilés et optimisés seront placés dans le dossier dist/. Ces fichiers sont de simples fichiers statiques (HTML, JS, CSS) qui peuvent être hébergés sur n'importe quel serveur web (Nginx, Apache, Firebase Hosting, etc.).
 
-## Running unit tests
+## Docker 
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Je vous conseille d'aller la partie api : [API de mesSalons](https://github.com/univ-smb-m1-isc-2026/mesSalonsDeCoiffure-api)
