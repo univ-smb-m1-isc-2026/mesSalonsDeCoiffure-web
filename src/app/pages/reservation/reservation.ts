@@ -151,13 +151,19 @@ chercherDispos() {
     }
 
     this.reservationService.getCreneauxDisponibles(empId, this.choix.prestationId, this.choix.date)
-        .subscribe({
+          .subscribe({
             next: (resultats) => {
-                this.creneauxDisponibles = resultats || [];
-                this.creneauSelectionne = null; // Reset de la sélection
-                this.message = this.creneauxDisponibles.length === 0 ?
-                               "Aucun créneau disponible à cette date." : "";
-                this.cdr.detectChanges(); // 💡 Important pour l'affichage immédiat
+              let liste = resultats || [];
+
+              // 🌟 TRI CHRONOLOGIQUE 🌟
+              liste.sort((a: any, b: any) => {
+                // On compare les chaînes ISO ou les tableaux de temps
+                return a.heureDebut > b.heureDebut ? 1 : -1;
+              });
+
+              this.creneauxDisponibles = liste;
+              this.message = liste.length === 0 ? "Aucun créneau disponible." : "";
+              this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error("Erreur API :", err);

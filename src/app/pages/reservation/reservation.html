@@ -48,38 +48,33 @@
     🔍 Chercher les disponibilités
   </button>
 
-  <div *ngIf="creneauxDisponibles.length > 0" class="results-section">
-    <h3>Créneaux disponibles le {{ choix.date | date:'dd/MM/yyyy' }}</h3>
+<div *ngIf="creneauxDisponibles.length > 0" class="results-section">
+  <h3>Créneaux disponibles le {{ choix.date | date:'dd/MM/yyyy' }}</h3>
 
-    <div class="creneaux-grid">
-      <button *ngFor="let creneau of creneauxDisponibles"
-              (click)="creneauSelectionne = creneau"
-              class="creneau-btn"
-              [class.selected]="creneauSelectionne === creneau">
-        {{ formaterHeure(creneau.heureDebut) }}
+  <div class="creneaux-grid">
+    <button *ngFor="let creneau of creneauxDisponibles"
+            (click)="creneauSelectionne = creneau"
+            class="creneau-btn"
+            [class.selected]="creneauSelectionne === creneau">
 
-        <span class="emp-name" *ngIf="choix.nImporteQui">
-            ({{ creneau.nomEmploye || creneau.employe?.nom }})
-        </span>
-      </button>
-    </div>
+      {{ formaterHeure(creneau.heureDebut) }}
 
-    <div *ngIf="creneauSelectionne" class="recap-box">
-      <h3>Récapitulatif</h3>
-      <p>Rendez-vous le <b>{{ choix.date | date:'dd/MM/yyyy' }}</b> à <b>{{ formaterHeure(creneauSelectionne.heureDebut) }}</b></p>
-      <p *ngIf="choix.nImporteQui">Avec : <b>{{ creneauSelectionne.employe?.nom }}</b></p>
-
-      <button *ngIf="estConnecte" class="btn-confirm" (click)="confirmerRendezVous()">
-        ✅ Confirmer la réservation
-      </button>
-
-      <div *ngIf="!estConnecte" class="login-prompt">
-        <p class="highlight-text">Vous y êtes presque !</p>
-        <p>Connectez-vous à votre compte pour finaliser ce rendez-vous.</p>
-        <button class="btn-login" (click)="allerVersConnexion()">
-          👤 Se connecter / S'inscrire
-        </button>
-      </div>
-    </div>
+      <span class="emp-name" *ngIf="choix.nImporteQui">
+        <br>({{ creneau.employeNom }})
+      </span>
+    </button>
   </div>
+
+  <div *ngIf="creneauSelectionne" class="recap-box">
+    <h3>Récapitulatif</h3>
+    <p>Rendez-vous le <b>{{ choix.date | date:'dd/MM/yyyy' }}</b> à <b>{{ formaterHeure(creneauSelectionne.heureDebut) }}</b></p>
+
+    <p>Avec : <b>{{ creneauSelectionne.employeNom }}</b></p>
+
+    <button *ngIf="estConnecte" class="btn-confirm" (click)="confirmerRendezVous()">
+      ✅ Confirmer la réservation
+    </button>
+
+    </div>
+</div>
 </div>
