@@ -6,12 +6,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(Auth);
   const token = authService.getToken();
 
-  // Si on a un token, on "clone" la requête pour lui ajouter le Header d'autorisation
-  if (token) {
-    const authReq = req.clone({
-      headers: req.headers.set('Authorization', `Bearer ${token}`)
+    if (token) {
+    const tokenPropre = token.replace(/['"]+/g, '').trim();
+
+    const requeteClonee = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${tokenPropre}`
+      }
     });
-    return next(authReq); // On envoie la requête modifiée
+    return next(requeteClonee);
   }
 
   // Si on n'a pas de token (ex: utilisateur non connecté), on envoie la requête normale

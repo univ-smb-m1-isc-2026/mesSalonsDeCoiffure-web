@@ -116,7 +116,7 @@ export class Reservation implements OnInit {
       });
   }
 
-  confirmerRendezVous() {
+confirmerRendezVous() {
     if (!this.estConnecte) {
       this.message = "Veuillez vous connecter pour réserver.";
       return;
@@ -124,14 +124,13 @@ export class Reservation implements OnInit {
 
     if (!this.creneauSelectionne) return;
 
-    const demande = {
+  const demande = {
       salonId: this.salonId,
       prestationId: this.choix.prestationId,
-      employeId: this.creneauSelectionne.employe.id || this.choix.employeId, // 👈 Correction : on récupère l'ID de l'employé dans l'objet
+      employeId: this.creneauSelectionne.employe?.id || this.creneauSelectionne.employeId || this.choix.employeId,
+
       date: this.choix.date,
-      heureDebut: this.creneauSelectionne.heureDebut,
-      nomClient: this.client.nom,
-      telephoneClient: this.client.telephone
+      heureDebut: this.creneauSelectionne.heureDebut
     };
 
     this.reservationService.reserver(demande).subscribe({
@@ -144,8 +143,16 @@ export class Reservation implements OnInit {
   }
 
   // 👇 NOUVELLE FONCTION POUR CORRIGER LE BUG DE L'HEURE 👇
-  formaterHeure(heure: string): string {
+formaterHeure(heure: string): string {
     if (!heure) return '';
-    return heure.substring(0, 5); // Transforme "09:00:00" en "09:00"
+
+    // Si l'API renvoie "2026-04-03T09:00:00"
+    if (heure.includes('T')) {
+      // On coupe au 'T', on prend la 2ème partie ("09:00:00"), et on garde 5 caractères
+      return heure.split('T')[1].substring(0, 5);
+    }
+
+    // Au cas où l'API renverrait juste "09:00:00" un jour
+    return heure.substring(0, 5);
   }
 }
