@@ -5,6 +5,7 @@ import { ReservationService } from '../../core/services/reservation';
 import { Salon } from '../../core/services/salon';
 import { Auth } from '../../core/services/auth';
 import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-reservation',
@@ -41,7 +42,10 @@ export class Reservation implements OnInit {
   creneauSelectionne: any = null;
   message = '';
 
-  ngOnInit() {
+  modeAnticipation: boolean = false;
+  oldRdvId: number | null = null;
+
+ngOnInit() {
     this.estConnecte = this.authService.isLoggedIn();
 
     if (this.estConnecte) {
@@ -58,9 +62,16 @@ export class Reservation implements OnInit {
     }
 
     this.route.queryParams.subscribe(params => {
+      // On détecte le mode
+      if (params['mode'] === 'anticiper' && params['oldRdvId']) {
+        this.modeAnticipation = true;
+        this.oldRdvId = params['oldRdvId'];
+      }
+
       if (params['salonId']) {
         this.salonId = params['salonId'];
-        this.chargerDonneesSalon(this.salonId!);
+        // 👇 On passe "params" à la fonction pour qu'elle pré-remplisse les listes
+        this.chargerDonneesSalon(this.salonId!, params);
       }
     });
   }
@@ -69,12 +80,48 @@ export class Reservation implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  chargerDonneesSalon(salonId: number) {
-    this.salonService.getPrestationsPubliques(salonId).subscribe(data => this.prestationsDuSalon = data);
+chargerDonneesSalon(salonId: number, params?: any) {
+    // 🚀 On lance les deux requêtes EN MÊME TEMPS (Parallèle)
+    forkJoin({
+      prestations: this.salonService.getPrestationsPubliques(salonId),
+      employes: this.salonService.getEmployesPublics(salonId)
+    }).subscribe({
+      next: ({ prestations, employes }) => {
 
-    this.salonService.getEmployesPublics(salonId).subscribe(data => {
-      this.tousLesEmployesDuSalon = data;
-      this.employesFiltres = [...data];
+        // 1. On stocke les données reçues
+        this.prestationsDuSalon = prestations;
+        this.tousLesEmployesDuSalon = employes;
+
+        // 2. Pré-remplissage de la prestation
+        if (params && params['prestationId']) {
+          this.choix.prestationId = Number(params['prestationId']) as any;
+        }
+
+        // 3. Filtrage des coiffeurs
+        if (this.choix.prestationId) {
+          this.employesFiltres = this.tousLesEmployesDuSalon.filter(emp =>
+            emp.prestations && emp.prestations.some((p: any) => p.id == this.choix.prestationId)
+          );
+        } else {
+          this.employesFiltres = [...employes];
+        }
+
+        // 4. Pré-remplissage de l'employé et de la date
+        if (params && params['employeId']) {
+          this.choix.employeId = Number(params['employeId']) as any;
+        }
+        if (params && params['date']) {
+          this.choix.date = params['date'];
+
+          // On lance la recherche de créneaux
+          this.chercherDispos();
+        }
+
+        // 🌟 LE COUP DE FOUET MAGIQUE (Ton idée !) 🌟
+        // On force Angular à mettre à jour le HTML instantanément
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error("Erreur lors du chargement des données du salon", err)
     });
   }
 
@@ -89,70 +136,82 @@ export class Reservation implements OnInit {
     }
   }
 
-  chercherDispos() {
+chercherDispos() {
     if (!this.choix.prestationId || !this.choix.date) {
-      this.message = "Veuillez choisir une prestation et une date.";
-      return;
+        this.message = "Veuillez choisir une prestation et une date.";
+        return;
     }
 
+    // On force null si "Peu m'importe" est coché
     const empId = this.choix.nImporteQui ? null : this.choix.employeId;
 
-    if (!empId && !this.choix.nImporteQui) {
-      this.message = "Veuillez choisir un coiffeur ou cocher 'Peu importe'.";
-      return;
+    if (empId === null && !this.choix.nImporteQui) {
+        this.message = "Veuillez choisir un coiffeur ou cocher 'Peu importe'.";
+        return;
     }
 
     this.reservationService.getCreneauxDisponibles(empId, this.choix.prestationId, this.choix.date)
-      .subscribe({
-        next: (creneaux) => {
-          const resultats = creneaux || [];
-          this.creneauxDisponibles = resultats;
-          this.message = resultats.length === 0 ? "Aucun créneau disponible à cette date." : "";
-        },
-        error: (err) => {
-          console.error(err);
-          this.message = "Erreur de recherche.";
-        }
-      });
-  }
-
+        .subscribe({
+            next: (resultats) => {
+                this.creneauxDisponibles = resultats || [];
+                this.creneauSelectionne = null; // Reset de la sélection
+                this.message = this.creneauxDisponibles.length === 0 ?
+                               "Aucun créneau disponible à cette date." : "";
+                this.cdr.detectChanges(); // 💡 Important pour l'affichage immédiat
+            },
+            error: (err) => {
+                console.error("Erreur API :", err);
+                this.message = "Erreur lors de la recherche des créneaux.";
+            }
+        });
+}
 confirmerRendezVous() {
-    if (!this.estConnecte) {
-      this.message = "Veuillez vous connecter pour réserver.";
-      return;
-    }
+    if (!this.estConnecte || !this.creneauSelectionne) return;
 
-    if (!this.creneauSelectionne) return;
-
-  const demande = {
+    const demande = {
       salonId: this.salonId,
       prestationId: this.choix.prestationId,
       employeId: this.creneauSelectionne.employe?.id || this.creneauSelectionne.employeId || this.choix.employeId,
-
       date: this.choix.date,
       heureDebut: this.creneauSelectionne.heureDebut
     };
 
-    this.reservationService.reserver(demande).subscribe({
-      next: () => {
-        alert("🎉 Réservation confirmée ! Vous recevrez un rappel WhatsApp.");
-        this.router.navigate(['/']);
-      },
-      error: () => alert("Erreur lors de la réservation.")
-    });
+    // 👇 LOGIQUE DE CHOIX : DÉPLACER ou CRÉER 👇
+    if (this.modeAnticipation && this.oldRdvId) {
+      this.reservationService.deplacer(this.oldRdvId, demande).subscribe({
+        next: () => {
+          alert("✅ Rendez-vous déplacé avec succès !");
+          this.router.navigate(['/profile']); // On le renvoie sur son profil
+        },
+        error: () => alert("Erreur lors du déplacement.")
+      });
+    } else {
+      this.reservationService.reserver(demande).subscribe({
+        next: () => {
+          alert("🎉 Réservation confirmée ! Vous recevrez un rappel WhatsApp.");
+          this.router.navigate(['/']);
+        },
+        error: () => alert("Erreur lors de la réservation.")
+      });
+    }
   }
 
   // 👇 NOUVELLE FONCTION POUR CORRIGER LE BUG DE L'HEURE 👇
-formaterHeure(heure: string): string {
+formaterHeure(heure: any): string {
     if (!heure) return '';
 
-    // Si l'API renvoie "2026-04-03T09:00:00"
-    if (heure.includes('T')) {
-      // On coupe au 'T', on prend la 2ème partie ("09:00:00"), et on garde 5 caractères
-      return heure.split('T')[1].substring(0, 5);
+    // Cas 1 : C'est une String ISO "2026-04-03T14:30:00"
+    if (typeof heure === 'string' && heure.includes('T')) {
+        return heure.split('T')[1].substring(0, 5);
     }
 
-    // Au cas où l'API renverrait juste "09:00:00" un jour
-    return heure.substring(0, 5);
-  }
+    // Cas 2 : C'est un tableau [année, mois, jour, heure, minute]
+    if (Array.isArray(heure) && heure.length >= 5) {
+        const h = heure[3].toString().padStart(2, '0');
+        const m = heure[4].toString().padStart(2, '0');
+        return `${h}:${m}`;
+    }
+
+    return 'Heure'; // Valeur par défaut pour debug
+}
 }

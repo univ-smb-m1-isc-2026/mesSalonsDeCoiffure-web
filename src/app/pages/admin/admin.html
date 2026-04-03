@@ -143,46 +143,59 @@
       </div>
     </div>
 
-    <div class="card" style="margin-top: 30px; border-left: 4px solid #3498db;">
-      <h2 style="color: #3498db; margin-top: 0;">📅 Planning & Créneaux Disponibles</h2>
+<div class="card" style="margin-top: 30px; border-left: 4px solid #3498db;">
+  <h2 style="color: #3498db; margin-top: 0;">📅 Planning & Créneaux de Travail</h2>
 
-    <form (ngSubmit)="sauvegarderCreneau()" class="form-row">
+  <form (ngSubmit)="sauvegarderCreneau()" class="form-row" style="background: #f0f7fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; align-items: flex-end;">
 
-        <div style="flex: 1;">
-          <select [(ngModel)]="formCreneau.employeId" name="c_emp">
-            <option [value]="null">Choisir un coiffeur...</option>
-            <option *ngFor="let emp of employes" [value]="emp.id">{{ emp.nom }}</option>
-          </select>
-        </div>
-
-        <div style="flex: 1;">
-          <select [(ngModel)]="formCreneau.jourSemaine" name="c_jour" required>
-            <option value="">Choisir un jour...</option>
-            <option *ngFor="let jour of joursDeLaSemaine" [value]="jour">{{ jour }}</option>
-          </select>
-        </div>
-
-        <div style="flex: 1;">
-          <input type="time" [(ngModel)]="formCreneau.heureDebut" name="c_heure" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary">➕ Ajouter</button>
-      </form>
-
-
-
-      <div *ngIf="creneaux.length === 0" class="alert alert-empty">
-        Aucun créneau d'ouverture n'est configuré pour ce salon.
-      </div>
-
-      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-       <div *ngFor="let c of creneaux" class="creneau-pill">
-        <strong>{{ c.jourSemaine }} à {{ c.heureDebut }}</strong>
-        <span>(Avec {{ c.employe?.nom }})</span>
-        <button (click)="supprimerCreneau(c.id)">❌</button>
-      </div>
-      </div>
+    <div style="flex: 1;">
+      <label><small><b>Coiffeur</b></small></label>
+      <select [(ngModel)]="formCreneau.employeId" name="c_emp" required style="width: 100%;">
+        <option [value]="null">Choisir...</option>
+        <option *ngFor="let emp of employes" [value]="emp.id">{{ emp.nom }}</option>
+      </select>
     </div>
+
+    <div style="flex: 1;">
+      <label><small><b>Jour</b></small></label>
+      <select [(ngModel)]="formCreneau.jourSemaine" name="c_jour" required style="width: 100%;">
+        <option value="" disabled>Jour...</option>
+        <option *ngFor="let jour of joursDeLaSemaine" [value]="jour">{{ jour }}</option>
+      </select>
+    </div>
+
+    <div style="flex: 0.5;">
+      <label><small><b>Début</b></small></label>
+      <input type="time" [(ngModel)]="formCreneau.heureDebut" name="c_debut" required style="width: 100%;">
+    </div>
+
+    <div style="flex: 0.5;">
+      <label><small><b>Fin</b></small></label>
+      <input type="time" [(ngModel)]="formCreneau.heureFin" name="c_fin" required style="width: 100%;">
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="background: #3498db; height: 38px;">
+      ➕ Ajouter au planning
+    </button>
+  </form>
+
+  <div *ngIf="creneaux.length === 0" class="alert alert-empty">
+    Aucun créneau d'ouverture n'est configuré pour ce salon.
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+    <div *ngFor="let c of creneaux" class="creneau-pill"
+         style="background: white; border: 1px solid #3498db; padding: 8px 12px; border-radius: 20px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <span style="color: #3498db; font-weight: bold;">{{ c.jourSemaine }}</span>
+      <span>{{ c.heureDebut }} - {{ c.heureFin }}</span>
+      <small style="color: #7f8c8d;">({{ c.employe?.nom }})</small>
+      <button (click)="supprimerCreneau(c.id)"
+              style="background: none; border: none; color: #e74c3c; cursor: pointer; font-weight: bold; padding: 0 5px;">
+        ×
+      </button>
+    </div>
+  </div>
+</div>
   </div>
 
   <div class="modal-overlay" *ngIf="afficherModalSuppression">

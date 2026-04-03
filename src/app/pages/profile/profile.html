@@ -62,7 +62,7 @@
     <div>
       <strong class="rdv-title">{{ rdv.prestation.nom }}</strong><br>
       <span class="rdv-date">Le {{ rdv.dateHeureDebut | date:'dd/MM/yyyy à HH:mm' }}</span><br>
-      <small class="rdv-details">📍 {{ rdv.salon.nom }} (avec {{ rdv.employe.nom }})</small>
+     <small class="rdv-details">📍 {{ rdv.salon?.nom }} (avec {{ rdv.employe?.nom }})</small>
     </div>
 
     <button (click)="anticiperRendezVous(rdv)" class="btn-anticipate">

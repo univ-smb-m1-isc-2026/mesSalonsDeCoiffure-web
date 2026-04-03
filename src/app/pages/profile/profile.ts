@@ -55,9 +55,26 @@ export class Profile implements OnInit {
   }
 
   anticiperRendezVous(rdv: any) {
-    // Redirection vers la réservation avec les paramètres nécessaires
+    const idDuSalon = rdv.salon?.id || rdv.prestation?.salon?.id;
+
+    if (!idDuSalon) {
+      alert("Impossible de modifier ce vieux rendez-vous car il n'est lié à aucun salon.");
+      return;
+    }
+
+    // On isole juste la date (ex: "2026-04-03" à partir de "2026-04-03T09:00:00")
+    const dateSeule = rdv.dateHeureDebut ? rdv.dateHeureDebut.split('T')[0] : '';
+
+    // On envoie TOUTES les infos dans l'URL !
     this.router.navigate(['/reserver'], {
-      queryParams: { salonId: rdv.salon.id, mode: 'anticiper', oldRdvId: rdv.id }
+      queryParams: {
+        salonId: idDuSalon,
+        mode: 'anticiper',
+        oldRdvId: rdv.id,
+        prestationId: rdv.prestation?.id,
+        employeId: rdv.employe?.id,
+        date: dateSeule
+      }
     });
   }
 

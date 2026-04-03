@@ -40,7 +40,8 @@ joursDeLaSemaine = ['LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI', 'SAMEDI',
 formCreneau: any = {
   employeId: null,
   jourSemaine: '', // 👈 Changé
-  heureDebut: ''
+  heureDebut: '',
+  heureFin: ''
 };
 
   ngOnInit() {

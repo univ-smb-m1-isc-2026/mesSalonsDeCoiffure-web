@@ -57,7 +57,10 @@
               class="creneau-btn"
               [class.selected]="creneauSelectionne === creneau">
         {{ formaterHeure(creneau.heureDebut) }}
-        <span class="emp-name" *ngIf="choix.nImporteQui">({{ creneau.employe?.nom }})</span>
+
+        <span class="emp-name" *ngIf="choix.nImporteQui">
+            ({{ creneau.nomEmploye || creneau.employe?.nom }})
+        </span>
       </button>
     </div>
 
